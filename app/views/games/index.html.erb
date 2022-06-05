@@ -1,0 +1,123 @@
+<div class="container mx-auto" style="margin-top: 100px;">
+  <div class="flex flex-col items-center">
+    <div style="border: 5px solid #c6c6c6;">
+      <div style="width: 360px;display: flex;flex-direction: row;background-color: #c6c6c6;padding: 20px;">
+        <div style="color: red;font-size: 32px;width: 40%;"><%= $mine_count %></div>
+        <div style="width: 20%;display: flex; justify-content: center;align-items: center;">
+          <div style="height: 48px;width: 48px;">
+            <% if $status == 'start' %>
+            <%= image_tag("/assets/icons/happy.svg") %>
+            <% elsif $status == 'lost' %>
+            <%= image_tag("/assets/icons/sad.svg") %>
+            <% else %>
+            <%= image_tag("/assets/icons/face_won.svg") %>
+            <% end %>
+          </div>
+        </div>
+        <div style="color: red;font-size: 32px;width: 40%;text-align: right;"><%= $time_spent %>sec</div>
+      </div>
+      <div style="width: 360px;" class="flex flex-wrap">
+        <% for i in 0..$rows - 1 do %>
+        <% for j in 0..$columns - 1 do %>
+        <div class="w-10 h-10 border">
+          <% if $status == 'start' %>
+          <a href='<%= "/#{i}/#{j}"  %>'>
+            <% if !@board_data[i][j][:revealed] %>
+            <%= image_tag("/assets/icons/closed.svg") %>
+            <% else %>
+            <% if @board_data[i][j][:holder] == '' %>
+            <%= image_tag("/assets/icons/open.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'flag' %>
+            <%= image_tag("/assets/icons/flag.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'bombed' %>
+            <%= image_tag("/assets/icons/bombed.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'bomb' %>
+            <%= image_tag("/assets/icons/bomb.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'number' %>
+            <div class="relative h-full w-full flex items-center justify-center">
+              <p class="z-10 font-black text-2xl text-color-<%= @board_data[i][j][:value] %>"><%= @board_data[i][j][:value] %></p>
+              <%= image_tag("/assets/icons/open.svg", class: "absolute") %>
+            </div>
+            <% end %>
+            <% end %>
+          </a>
+          <% else %>
+          <div>
+            <% if !@board_data[i][j][:revealed] %>
+            <%= image_tag("/assets/icons/closed.svg") %>
+            <% else %>
+            <% if @board_data[i][j][:holder] == '' %>
+            <%= image_tag("/assets/icons/open.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'flag' %>
+            <%= image_tag("/assets/icons/flag.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'bombed' %>
+            <%= image_tag("/assets/icons/bombed.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'bomb' %>
+            <%= image_tag("/assets/icons/bomb.svg") %>
+            <% elsif @board_data[i][j][:holder] == 'number' %>
+            <div class="relative h-full w-full flex items-center justify-center">
+              <p class="z-10 font-black text-2xl text-color-<%= @board_data[i][j][:value] %>"><%= @board_data[i][j][:value] %></p>
+              <%= image_tag("/assets/icons/open.svg", class: "absolute") %>
+            </div>
+            <% end %>
+            <% end %>
+          </div>
+          <% end %>
+        </div>
+        <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <% if $status == 'lost' %>
+  <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center" style="margin-top: 20px !important; margin-bottom: 20px !important">
+      <p style="color: red">
+        You Lost
+      </p>
+    </div>
+    <div style="padding: 20px;margin-top: 20px;" class="border flex flex-col">
+      <div>Time: <span class="font-bold"><%= $time_spent %></span> sec</div>
+      <div>Clicks: <%= $click %></div>
+    </div>
+  </div>
+  <div class="flex flex-col items-center" style="margin-top: 20px !important">
+    <a href='<%= "/" %>'><button class="btn btn-blue" style="color: blue">
+    Restart Game
+    </button></a>
+  </div>
+  <% end %>
+  <% if $status == 'won' %>
+  <%= form_with(model: @score) do |form| %>
+  <% if @score.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@score.errors.count, "error") %> prohibited this result from being saved:</h2>
+    <ul>
+      <% @score.errors.each do |error| %>
+      <li><%= error.full_message %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <%= form.hidden_field :clicks_count, value: $click %>
+  <%= form.hidden_field :time_taken, value: $time_spent %>
+  <%= form.hidden_field :data, value: "" %>
+  <%= form.hidden_field :best_score, value: @best_score  %>
+  <div class="actions">
+    <%= form.submit "Submit" %>
+  </div>
+  <% end %>
+  <% end %>
+</div>
+<style scoped>
+  .btn-blue {
+  @apply bg-blue-500 text-white;
+  }
+  .btn-blue:hover {
+  @apply bg-blue-700;
+  }
+</style>

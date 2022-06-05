@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  time_spent: 1
+  clicks_count: 1
+  data: 
+  best_score: 1.5
+
+two:
+  name: MyString
+  time_spent: 1
+  clicks_count: 1
+  data: 
+  best_score: 1.5
